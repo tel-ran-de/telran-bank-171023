@@ -52,12 +52,6 @@ public class AccountTest {
         // when
         boolean isEven = a % 2 == 0;
         // then
-//        if (isEven) {
-//            System.out.println("Yes");
-//        } else {
-////            System.out.println("No");
-//            throw new RuntimeException("No");
-//        }
         Assertions.assertTrue(isEven);
     }
 }
