@@ -54,4 +54,19 @@ public class AccountTest {
         // then
         Assertions.assertTrue(isEven);
     }
+
+    @Test
+    void shouldGetAccountBalance() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/account/balance")
+                        .queryParam("accountId","3")
+                        .queryParam("accountType","checking"))
+                .andExpect(content().string("The balance for accountId = 3 is 1235 on checking"));
+    }
+    @Test
+    void shouldGetAccountBalanceFor1() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/account/balance")
+                        .queryParam("accountId","1")
+                        .queryParam("accountType","checking"))
+                .andExpect(content().string("The balance for accountId = 1 is 0 on checking"));
+    }
 }
