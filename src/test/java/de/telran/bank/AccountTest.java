@@ -63,7 +63,7 @@ public class AccountTest {
                 .andExpect(content().string("The balance for accountId = 3 is 1235 on checking"));
     }
     @Test
-    void shouldGetAccountBalanceFor1() throws Exception {
+    void shouldGetDefaultAccountBalance() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/account/balance")
                         .queryParam("accountId","1")
                         .queryParam("accountType","checking"))
