@@ -36,4 +36,10 @@ public class AccountController {
     public String helloWorld() {
         return "Hello world";
     }
+
+    @RequestMapping(value = "/status", method = RequestMethod.GET)
+    @ResponseBody
+    public String status() {
+        return "ok";
+    }
 }
