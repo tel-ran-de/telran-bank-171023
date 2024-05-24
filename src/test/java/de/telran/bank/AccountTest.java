@@ -1,6 +1,7 @@
 package de.telran.bank;
 
 import de.telran.bank.account.AccountBalanceStorage;
+import de.telran.bank.account.AccountTypes;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.math.BigDecimal;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
@@ -42,7 +45,7 @@ public class AccountTest {
 
     @Test
     void shouldCheckBalanceInStorage() {
-        Assertions.assertEquals(accountBalanceStorage.getBalance("3", accountType), 1235);
+        Assertions.assertEquals(accountBalanceStorage.getBalance("3", AccountTypes.CHECKING_ACCOUNT), BigDecimal.valueOf(0));
     }
 
     @Test
@@ -59,14 +62,14 @@ public class AccountTest {
     void shouldGetAccountBalance() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/account/balance")
                         .queryParam("accountId","3")
-                        .queryParam("accountType","checking"))
-                .andExpect(content().string("The balance for accountId = 3 is 1235 on checking"));
+                        .queryParam("accountType", String.valueOf(AccountTypes.CHECKING_ACCOUNT)))
+                .andExpect(content().string("The balance for accountId = 3 is 0 on checkingAccount"));
     }
     @Test
     void shouldGetDefaultAccountBalance() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/account/balance")
                         .queryParam("accountId","1")
-                        .queryParam("accountType","checking"))
-                .andExpect(content().string("The balance for accountId = 1 is 0 on checking"));
+                        .queryParam("accountType",String.valueOf(AccountTypes.SAVING_ACCOUNT)))
+                .andExpect(content().string("The balance for accountId = 1 is 0 on savingAccount"));
     }
 }

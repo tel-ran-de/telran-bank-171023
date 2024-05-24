@@ -9,17 +9,22 @@ import java.util.Map;
 @Component
 public class AccountBalanceStorage {
 
-    private final Map<String, Integer> accountToBalance = new HashMap<>();
+    private final Map<String, Balance> accountToBalance = new HashMap<>();
+
 
     public AccountBalanceStorage() {
-        accountToBalance.put("3", 1235);
+        accountToBalance.put("1", new Balance());
+        accountToBalance.put("3", new Balance());
     }
 
-    public int getBalance(String account, String accountType) {
-        return accountToBalance.getOrDefault(account, 0);
+
+    public BigDecimal getBalance(String account, AccountTypes accountType) {
+        return accountToBalance.get(account).getAccountTypeToBalance().getOrDefault(accountType, BigDecimal.valueOf(0));
     }
 
-    public void addToAccount(String account, String accountType, BigDecimal amount) {
+    public void addToAccount(String account, AccountTypes accountType, BigDecimal amount) {
 
+        BigDecimal temp = accountToBalance.get(account).getAccountTypeToBalance().get(accountType);
+        accountToBalance.get(account).getAccountTypeToBalance().put(accountType, temp.add(amount));
     }
 }
