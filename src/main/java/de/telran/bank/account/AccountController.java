@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
 
 @Controller
 public class AccountController {
@@ -24,11 +23,18 @@ public class AccountController {
 
     @RequestMapping(value = "/account/balance", method = RequestMethod.GET)
     @ResponseBody
-    public String accountBalancer(@RequestParam("accountId") String accountId, @RequestParam("accountType") String accountType) {
-        List<Integer> numbers = new ArrayList<>();
-        numbers.addAll(List.of(1, 2, 3));
-        int balance = accountBalanceStorage.getBalance(accountId);
-        return "The balance for accountId = " + accountId + " is " + balance + " on " + accountType;
+    public String accountBalancer(@RequestParam("accountId") String accountId, @RequestParam("accountType") AccountTypes accountType) {
+        BigDecimal balance = accountBalanceStorage.getBalance(accountId, accountType);
+        return "The balance for accountId = " + accountId + " is " + balance + " on " + accountType.getValue();
+    }
+
+    @RequestMapping(value = "/account/balance/topup", method = RequestMethod.POST)
+    @ResponseBody
+    public String topupAccountBalance(@RequestParam("accountId") String accountId,
+                                      @RequestParam("accountType") AccountTypes accountType,
+                                      @RequestParam("amount") BigDecimal amount) {
+        accountBalanceStorage.addToAccount(accountId, accountType, amount);
+        return "The balance is updated";
     }
 
     @RequestMapping(value = "/hello", method = RequestMethod.GET)
@@ -42,4 +48,6 @@ public class AccountController {
     public String status() {
         return "ok";
     }
+
+
 }
