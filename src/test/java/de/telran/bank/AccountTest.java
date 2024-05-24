@@ -72,4 +72,30 @@ public class AccountTest {
                         .queryParam("accountType",String.valueOf(AccountTypes.SAVING_ACCOUNT)))
                 .andExpect(content().string("The balance for accountId = 1 is 0 on savingAccount"));
     }
+
+    @Test
+    void shouldTopUpAccountBalance() throws Exception {
+        //given
+        BigDecimal amount = new BigDecimal("10.23");
+        String accountId = "1";
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.post("/account/balance/topup")
+                        .queryParam("accountId",accountId)
+                        .queryParam("amount", String.valueOf(amount))
+                        .queryParam("accountType",String.valueOf(AccountTypes.SAVING_ACCOUNT)))
+                .andExpect(content().string("The balance is updated"));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/account/balance/topup")
+                        .queryParam("accountId",accountId)
+                        .queryParam("amount", String.valueOf(amount))
+                        .queryParam("accountType",String.valueOf(AccountTypes.SAVING_ACCOUNT)))
+                .andExpect(content().string("The balance is updated"));
+
+        //then
+        mockMvc.perform(MockMvcRequestBuilders.get("/account/balance")
+                        .queryParam("accountId",accountId)
+                        .queryParam("accountType",String.valueOf(AccountTypes.SAVING_ACCOUNT)))
+                .andExpect(content().string("The balance for accountId = 1 is " +  amount.add(amount) + " on savingAccount"));
+    }
+
 }

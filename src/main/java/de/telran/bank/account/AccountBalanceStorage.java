@@ -18,12 +18,11 @@ public class AccountBalanceStorage {
     }
 
 
-    public BigDecimal getBalance(String account, AccountTypes accountType) {
+    public synchronized BigDecimal getBalance(String account, AccountTypes accountType) {
         return accountToBalance.get(account).getAccountTypeToBalance().getOrDefault(accountType, BigDecimal.valueOf(0));
     }
 
-    public void addToAccount(String account, AccountTypes accountType, BigDecimal amount) {
-
+    public synchronized void addToAccount(String account, AccountTypes accountType, BigDecimal amount) {
         BigDecimal temp = accountToBalance.get(account).getAccountTypeToBalance().get(accountType);
         accountToBalance.get(account).getAccountTypeToBalance().put(accountType, temp.add(amount));
     }
