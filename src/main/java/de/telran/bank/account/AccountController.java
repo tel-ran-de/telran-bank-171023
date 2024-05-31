@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 
 @Controller
 public class AccountController {
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Autowired
     private AccountBalanceStorage accountBalanceStorage;
@@ -47,6 +49,13 @@ public class AccountController {
     @ResponseBody
     public String status() {
         return "ok";
+    }
+
+    @RequestMapping(value = "/account", method = RequestMethod.POST)
+    @ResponseBody
+    public String createAccount() {
+        Account account = accountRepository.save(new Account());
+        return String.valueOf(account.getId());
     }
 
 
