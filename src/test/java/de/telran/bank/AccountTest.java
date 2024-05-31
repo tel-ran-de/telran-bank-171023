@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.math.BigDecimal;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SuppressWarnings("ConstantValue")
 @SpringBootTest
@@ -98,4 +99,10 @@ public class AccountTest {
                 .andExpect(content().string("The balance for accountId = 1 is " +  amount.add(amount) + " on savingAccount"));
     }
 
+    @Test
+    void shouldCreateAccount() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/account"))
+                .andExpect(status().is(200));
+
+    }
 }
