@@ -1,6 +1,8 @@
 package de.telran.bank;
 
+import de.telran.bank.account.Account;
 import de.telran.bank.account.AccountBalanceStorage;
+import de.telran.bank.account.AccountRepository;
 import de.telran.bank.account.AccountTypes;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,9 @@ public class AccountTest {
     @Autowired
     private AccountBalanceStorage accountBalanceStorage;
 
+    @Autowired
+    private AccountRepository accountRepository;
+
     @Test
     void shouldCheckThatAccountUrlReturnsString() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/account"))
@@ -45,11 +50,6 @@ public class AccountTest {
     }
 
     @Test
-    void shouldCheckBalanceInStorage() {
-        Assertions.assertEquals(accountBalanceStorage.getBalance("3", AccountTypes.CHECKING_ACCOUNT), BigDecimal.valueOf(0));
-    }
-
-    @Test
     void shouldCheckIfANumberIsEven() {
         // given
         int a = 4;
@@ -61,16 +61,21 @@ public class AccountTest {
 
     @Test
     void shouldGetAccountBalance() throws Exception {
+        // given
+        Account account = new Account();
+        account = accountRepository.save(account);
+        // then
         mockMvc.perform(MockMvcRequestBuilders.get("/account/balance")
-                        .queryParam("accountId","3")
+                        .queryParam("accountId", String.valueOf(account.getId()))
                         .queryParam("accountType", String.valueOf(AccountTypes.CHECKING_ACCOUNT)))
-                .andExpect(content().string("The balance for accountId = 3 is 0 on checkingAccount"));
+                .andExpect(content().string("The balance for accountId = " + account.getId() + " is 0 on checkingAccount"));
     }
+
     @Test
     void shouldGetDefaultAccountBalance() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/account/balance")
-                        .queryParam("accountId","1")
-                        .queryParam("accountType",String.valueOf(AccountTypes.SAVING_ACCOUNT)))
+                        .queryParam("accountId", "1")
+                        .queryParam("accountType", String.valueOf(AccountTypes.SAVING_ACCOUNT)))
                 .andExpect(content().string("The balance for accountId = 1 is 0 on savingAccount"));
     }
 
@@ -81,22 +86,22 @@ public class AccountTest {
         String accountId = "1";
         //when
         mockMvc.perform(MockMvcRequestBuilders.post("/account/balance/topup")
-                        .queryParam("accountId",accountId)
+                        .queryParam("accountId", accountId)
                         .queryParam("amount", String.valueOf(amount))
-                        .queryParam("accountType",String.valueOf(AccountTypes.SAVING_ACCOUNT)))
+                        .queryParam("accountType", String.valueOf(AccountTypes.SAVING_ACCOUNT)))
                 .andExpect(content().string("The balance is updated"));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/account/balance/topup")
-                        .queryParam("accountId",accountId)
+                        .queryParam("accountId", accountId)
                         .queryParam("amount", String.valueOf(amount))
-                        .queryParam("accountType",String.valueOf(AccountTypes.SAVING_ACCOUNT)))
+                        .queryParam("accountType", String.valueOf(AccountTypes.SAVING_ACCOUNT)))
                 .andExpect(content().string("The balance is updated"));
 
         //then
         mockMvc.perform(MockMvcRequestBuilders.get("/account/balance")
-                        .queryParam("accountId",accountId)
-                        .queryParam("accountType",String.valueOf(AccountTypes.SAVING_ACCOUNT)))
-                .andExpect(content().string("The balance for accountId = 1 is " +  amount.add(amount) + " on savingAccount"));
+                        .queryParam("accountId", accountId)
+                        .queryParam("accountType", String.valueOf(AccountTypes.SAVING_ACCOUNT)))
+                .andExpect(content().string("The balance for accountId = 1 is " + amount.add(amount) + " on savingAccount"));
     }
 
     @Test
