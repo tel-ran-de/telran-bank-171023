@@ -63,12 +63,14 @@ public class AccountTest {
     void shouldGetAccountBalance() throws Exception {
         // given
         Account account = new Account();
+        account.setType("checkingAccount");
+        account.setBalance(BigDecimal.TEN);
         account = accountRepository.save(account);
         // then
         mockMvc.perform(MockMvcRequestBuilders.get("/account/balance")
                         .queryParam("accountId", String.valueOf(account.getId()))
                         .queryParam("accountType", String.valueOf(AccountTypes.CHECKING_ACCOUNT)))
-                .andExpect(content().string("The balance for accountId = " + account.getId() + " is 0 on checkingAccount"));
+                .andExpect(content().string("The balance for accountId = " + account.getId() + " is 10 on checkingAccount"));
     }
 
     @Test
