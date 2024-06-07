@@ -1,5 +1,6 @@
 package de.telran.bank.account;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,7 @@ public class AccountBalanceStorage {
         return accountRepository.findByIdAndType(accountId, accountType.getValue());
     }
 
+    @Transactional
     public synchronized void addToAccount(long accountId, AccountTypes accountType, BigDecimal amount) {
         accountRepository.addToAccount(accountId, accountType.getValue(), amount);
     }

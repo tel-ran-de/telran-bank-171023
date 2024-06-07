@@ -75,17 +75,27 @@ public class AccountTest {
 
     @Test
     void shouldGetDefaultAccountBalance() throws Exception {
+        Account account = new Account();
+        account.setType("savingAccount");
+        account.setBalance(BigDecimal.ZERO);
+        account = accountRepository.save(account);
+
         mockMvc.perform(MockMvcRequestBuilders.get("/account/balance")
-                        .queryParam("accountId", "1")
+                        .queryParam("accountId", String.valueOf(account.getId()))
                         .queryParam("accountType", String.valueOf(AccountTypes.SAVING_ACCOUNT)))
-                .andExpect(content().string("The balance for accountId = 1 is 0 on savingAccount"));
+                .andExpect(content().string("The balance for accountId = " + account.getId() + " is 0 on savingAccount"));
     }
 
     @Test
     void shouldTopUpAccountBalance() throws Exception {
         //given
+        Account account = new Account();
+        account.setType("savingAccount");
+        account.setBalance(BigDecimal.ZERO);
+        account = accountRepository.save(account);
+
         BigDecimal amount = new BigDecimal("10.23");
-        String accountId = "1";
+        String accountId = String.valueOf(account.getId());
         //when
         mockMvc.perform(MockMvcRequestBuilders.post("/account/balance/topup")
                         .queryParam("accountId", accountId)
@@ -103,7 +113,7 @@ public class AccountTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/account/balance")
                         .queryParam("accountId", accountId)
                         .queryParam("accountType", String.valueOf(AccountTypes.SAVING_ACCOUNT)))
-                .andExpect(content().string("The balance for accountId = 1 is " + amount.add(amount) + " on savingAccount"));
+                .andExpect(content().string("The balance for accountId = " + accountId + " is " + amount.add(amount) + " on savingAccount"));
     }
 
     @Test
@@ -112,4 +122,6 @@ public class AccountTest {
                 .andExpect(status().is(200));
 
     }
+
+
 }
