@@ -117,6 +117,42 @@ public class AccountTest {
     }
 
     @Test
+    void shouldNotTopUpNegativeAccountBalance() throws Exception {
+        //given
+        Account account = new Account();
+        account.setType("savingAccount");
+        account.setBalance(BigDecimal.ZERO);
+        account = accountRepository.save(account);
+
+        BigDecimal amount = new BigDecimal("-10.23");
+        String accountId = String.valueOf(account.getId());
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.post("/account/balance/topup")
+                        .queryParam("accountId", accountId)
+                        .queryParam("amount", String.valueOf(amount))
+                        .queryParam("accountType", String.valueOf(AccountTypes.SAVING_ACCOUNT)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldNotTopUpZeroAccountBalance() throws Exception {
+        //given
+        Account account = new Account();
+        account.setType("savingAccount");
+        account.setBalance(BigDecimal.ZERO);
+        account = accountRepository.save(account);
+
+        BigDecimal amount = new BigDecimal("0.00");
+        String accountId = String.valueOf(account.getId());
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.post("/account/balance/topup")
+                        .queryParam("accountId", accountId)
+                        .queryParam("amount", String.valueOf(amount))
+                        .queryParam("accountType", String.valueOf(AccountTypes.SAVING_ACCOUNT)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void shouldCreateAccount() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/account"))
                 .andExpect(status().is(200));
