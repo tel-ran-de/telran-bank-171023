@@ -25,14 +25,14 @@ public class AccountController {
 
     @RequestMapping(value = "/account/balance", method = RequestMethod.GET)
     @ResponseBody
-    public String accountBalancer(@RequestParam("accountId") String accountId, @RequestParam("accountType") AccountTypes accountType) {
+    public String accountBalancer(@RequestParam("accountId") long accountId, @RequestParam("accountType") AccountTypes accountType) {
         BigDecimal balance = accountBalanceStorage.getBalance(accountId, accountType);
         return "The balance for accountId = " + accountId + " is " + balance + " on " + accountType.getValue();
     }
 
     @RequestMapping(value = "/account/balance/topup", method = RequestMethod.POST)
     @ResponseBody
-    public String topupAccountBalance(@RequestParam("accountId") String accountId,
+    public String topupAccountBalance(@RequestParam("accountId") long accountId,
                                       @RequestParam("accountType") AccountTypes accountType,
                                       @RequestParam("amount") BigDecimal amount) {
         accountBalanceStorage.addToAccount(accountId, accountType, amount);

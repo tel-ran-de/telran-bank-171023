@@ -1,5 +1,7 @@
 package de.telran.bank.account;
 
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -8,22 +10,16 @@ import java.util.Map;
 
 @Component
 public class AccountBalanceStorage {
+    @Autowired
+    private AccountRepository accountRepository;
 
-    private final Map<String, Balance> accountToBalance = new HashMap<>();
-
-
-    public AccountBalanceStorage() {
-        accountToBalance.put("1", new Balance());
-        accountToBalance.put("3", new Balance());
+    public synchronized BigDecimal getBalance(long accountId, AccountTypes accountType) {
+        return accountRepository.findByIdAndType(accountId, accountType.getValue());
     }
 
-
-    public synchronized BigDecimal getBalance(String account, AccountTypes accountType) {
-        return accountToBalance.get(account).getAccountTypeToBalance().getOrDefault(accountType, BigDecimal.valueOf(0));
+    @Transactional
+    public synchronized void addToAccount(long accountId, AccountTypes accountType, BigDecimal amount) {
+        accountRepository.addToAccount(accountId, accountType.getValue(), amount);
     }
 
-    public synchronized void addToAccount(String account, AccountTypes accountType, BigDecimal amount) {
-        BigDecimal temp = accountToBalance.get(account).getAccountTypeToBalance().get(accountType);
-        accountToBalance.get(account).getAccountTypeToBalance().put(accountType, temp.add(amount));
-    }
 }
