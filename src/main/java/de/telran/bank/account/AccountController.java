@@ -1,18 +1,18 @@
 package de.telran.bank.account;
 
+import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 
 @Controller
+@Validated
 public class AccountController {
     @Autowired
     private AccountRepository accountRepository;
@@ -37,11 +37,7 @@ public class AccountController {
     @ResponseBody
     public String topupAccountBalance(@RequestParam("accountId") long accountId,
                                       @RequestParam("accountType") AccountTypes accountType,
-                                      @RequestParam("amount") BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(HttpStatus.BAD_REQUEST.value()));
-
-        }
+                                      @RequestParam("amount") @Positive BigDecimal amount) {
         accountBalanceStorage.addToAccount(accountId, accountType, amount);
         return "The balance is updated";
     }
