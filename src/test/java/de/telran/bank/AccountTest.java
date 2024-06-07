@@ -70,7 +70,7 @@ public class AccountTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/account/balance")
                         .queryParam("accountId", String.valueOf(account.getId()))
                         .queryParam("accountType", String.valueOf(AccountTypes.CHECKING_ACCOUNT)))
-                .andExpect(content().string("The balance for accountId = " + account.getId() + " is 10 on checkingAccount"));
+                .andExpect(content().string("The balance for accountId = " + account.getId() + " is 10.00 on checkingAccount"));
     }
 
     @Test
@@ -83,7 +83,7 @@ public class AccountTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/account/balance")
                         .queryParam("accountId", String.valueOf(account.getId()))
                         .queryParam("accountType", String.valueOf(AccountTypes.SAVING_ACCOUNT)))
-                .andExpect(content().string("The balance for accountId = " + account.getId() + " is 0 on savingAccount"));
+                .andExpect(content().string("The balance for accountId = " + account.getId() + " is 0.00 on savingAccount"));
     }
 
     @Test
